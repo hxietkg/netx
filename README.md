@@ -1,2 +1,3 @@
 # netx
-Studying golang for me
+
+Studying golang for me! :)
