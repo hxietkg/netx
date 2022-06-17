@@ -58,7 +58,7 @@ func arpFloodHandler(cmd *cobra.Command, args []string) {
 	if n < 64 {
 		n = 64
 	}
-	pkt := utils.Packet{n, data}
+	pkt := utils.NewPacket(n, data)
 
 	if len(ifname) > 0 {
 		ifa = utils.GetIfIndex(ifname)

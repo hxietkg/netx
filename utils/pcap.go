@@ -15,6 +15,7 @@ package utils
 
 import (
 	"log"
+	"time"
 
 	//"github.com/google/gopacket"
 	//"github.com/google/gopacket/layers"
@@ -28,14 +29,25 @@ type HostInterface struct {
 }
 
 type Packet struct {
-	Length  int
-	Data    []byte
+	Length        int
+	Data          []byte
+	Seconds       uint32
+	NanoSeconds   uint32
 }
 
 const (
 	// The same default as tcpdump.
-	defaultSnapLen = 262144
+	DefaultSnapLen = 262144
 )
+
+func NewPacket(Length int, Data []byte) *Packet {
+	return &Packet{
+		Length: Length,
+		Data: Data,
+		Seconds: 0,
+		NanoSeconds: 0,
+	}
+}
 
 func ListInterfaces() ([]HostInterface) {
 	var ret []HostInterface
@@ -59,31 +71,37 @@ func GetIfIndex(ifname string) int {
 	return 0
 }
 
-func OpenInterface(ifa int) HostInterface {
+func OpenInterface(ifa int) *HostInterface {
 	ifaces := ListInterfaces()
 	ifName := ifaces[ifa].Name
-	handle, err := pcap.OpenLive(ifName, defaultSnapLen, true,
+	handle, err := pcap.OpenLive(ifName, DefaultSnapLen, true,
 				     pcap.BlockForever)
 	if err != nil {
 		panic(err)
 	}
-	return HostInterface{handle, ifName, ifaces[ifa].Desc}
+	return &HostInterface{handle, ifName, ifaces[ifa].Desc}
 }
 
-func CloseInterface(iface HostInterface) {
+func CloseInterface(iface *HostInterface) {
 	iface.Handle.Close()
 }
 
-func ReadPacket(iface HostInterface) Packet {
+func ReadPacket(iface *HostInterface, fromTm *time.Time) *Packet {
 	h := iface.Handle
 	data, ci, err := h.ReadPacketData()
 	if err != nil {
 		log.Fatal(err)
 	}
-	return Packet{ci.CaptureLength, data}
+	pkt := NewPacket(ci.CaptureLength, data)
+	if fromTm != nil {
+		tm := time.Since(*fromTm)
+		pkt.Seconds = uint32(tm.Seconds())
+		pkt.NanoSeconds = uint32(tm.Nanoseconds() % 1000000000)
+	}
+	return pkt
 }
 
-func SendPacket(iface HostInterface, pkt Packet) {
+func SendPacket(iface *HostInterface, pkt *Packet) {
 	h := iface.Handle
 	if err := h.WritePacketData(pkt.Data[0:pkt.Length]); err != nil {
 		log.Fatal(err)

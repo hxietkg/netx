@@ -1,6 +1,6 @@
-netx.exe dump -l
+netx.exe listif
 
-netx.exe dump -i 5 -c 20
+netx.exe rx -i 5
 
 netx.exe arpflood -i 4 --src-mac=00:11:22:33:44:55 --dest-mac=00:55:44:33:22:11 --arp-src-mac=00:12:34:56:78:90 --arp-target-mac=00:90:78:56:34:21 --arp-src-ip=192.168.11.11 --arp-target-ip=102.168.11.22
 

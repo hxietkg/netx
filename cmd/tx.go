@@ -36,7 +36,7 @@ var txCmd = &cobra.Command{
 
 func init() {
 	txCmd.Flags().IntVarP(&ifa, "interface", "i", 0, "Interface used for tx")
-	txCmd.Flags().StringVarP(&ifname, "ifname", "", "", "Interface used for tx")
+	txCmd.Flags().StringVarP(&ifname, "ifname", "n", "", "Interface used for tx")
 	txCmd.Flags().StringVarP(&packetstr, "packet", "p", "", "Packet string in hex format")
 	rootCmd.AddCommand(txCmd)
 }
@@ -58,7 +58,7 @@ func txHandler(cmd *cobra.Command, args []string) {
 		data[i/2] = k
 	}
 
-	pkt := utils.Packet{minlen, data}
+	pkt := utils.NewPacket(minlen, data)
 
 	if len(ifname) > 0 {
 		ifa = utils.GetIfIndex(ifname)

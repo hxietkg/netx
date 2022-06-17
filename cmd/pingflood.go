@@ -55,7 +55,7 @@ func pingFloodHandler(cmd *cobra.Command, args []string) {
 	cksum = utils.CheckSum(data[n1+n2:tlen])
 	utils.PutInt16Val(data, n1 + n2 + 2, uint(cksum))
 
-	pkt := utils.Packet{tlen, data}
+	pkt := utils.NewPacket(tlen, data)
 
 	if len(ifname) > 0 {
 		ifa = utils.GetIfIndex(ifname)

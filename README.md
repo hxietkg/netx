@@ -8,11 +8,11 @@ Studying golang for me! :)
 This repo is just used for go-lang sutdy, you may use command 'next' to do:
 
 1. List all interfaces in the host:
-    ./netx dump -l
+    ./netx listif
 
 2. Capture packets from a specific interface:
-    ./netx dump -i <N> -c 10
-    ./netx dump --ifname <ifname> -c 10
+    ./netx rx -i <N>
+    ./netx rx --ifname <ifname>
 
 3. arpflood:
     ./netx arpflood -i 4 \

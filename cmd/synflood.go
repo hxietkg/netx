@@ -61,7 +61,7 @@ func synFloodHandler(cmd *cobra.Command, args []string) {
 	cksum = utils.PesudoChecksum(data[n1:n1+n2], n3 + n4, data[n1+n2:tlen])
 	utils.PutInt16Val(data, n1 + n2 + 16, uint(cksum))
 
-	pkt := utils.Packet{tlen, data}
+	pkt := utils.NewPacket(tlen, data)
 
 	if len(ifname) > 0 {
 		ifa = utils.GetIfIndex(ifname)
