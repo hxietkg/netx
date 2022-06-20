@@ -70,7 +70,6 @@ func ctrl_c_Handler() {
 }
 
 func init() {
-	ctrl_c_Handler()
 	rxCmd.Flags().IntVarP(&ifa, "interface", "i", 0, "Interface used for rx")
 	rxCmd.Flags().StringVarP(&ifname, "ifname", "n", "", "Interface used for rx")
 	rxCmd.Flags().StringVarP(&filename, "file", "f", "", ".pcap file to save packets")
@@ -95,6 +94,7 @@ func SavePacket(pkt *utils.Packet, f *os.File) {
 }
 
 func rxHandler(cmd *cobra.Command, args []string) {
+	ctrl_c_Handler()
 	var fp *os.File
 	fp = nil
 	if filename != "" {
