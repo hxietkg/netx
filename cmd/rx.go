@@ -123,10 +123,21 @@ func rxHandler(cmd *cobra.Command, args []string) {
 	defer utils.CloseInterface(iface)
 	log.Printf("Open interface %d, %s/%s", ifa, iface.Name, iface.Desc)
 	running = true
+	ch := make(chan *utils.Packet, 100)
+	defer close(ch)
+	go func() {
+		for running {
+			select {
+			case pkt := <-ch:
+				SavePacket(pkt, fp)
+			case <-time.After(time.Second * 1):
+			}
+		}
+	}()
 	StartTime := time.Now()
 	for running {
 		pkt := utils.ReadPacket(iface, &StartTime)
-		SavePacket(pkt, fp)
+		ch<- pkt
 	}
 }
 
